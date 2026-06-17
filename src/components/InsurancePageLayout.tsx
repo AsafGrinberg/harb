@@ -6,13 +6,12 @@ import InsuranceTypes from "./InsuranceTypes";
 import InfoTabs from "./InfoTabs";
 import Footer from "./Footer";
 import StickyBar from "./StickyBar";
+import HeroHighlights from "./HeroHighlights";
 
 interface Props {
   title: string;
   subtitle: string;
 }
-
-const badges = ["✅ ללא עלות", "✅ ללא התחייבות", "✅ בדיקה תוך דקות"];
 
 export default function InsurancePageLayout({ title, subtitle }: Props) {
   return (
@@ -49,16 +48,7 @@ export default function InsurancePageLayout({ title, subtitle }: Props) {
             >
               {subtitle}
             </h2>
-            <div className="flex flex-wrap justify-center gap-2 mb-5">
-              {badges.map((b) => (
-                <span
-                  key={b}
-                  className="bg-white rounded-full px-4 py-1.5 text-xs font-semibold text-gray-700 border border-gray-200 shadow-sm"
-                >
-                  {b}
-                </span>
-              ))}
-            </div>
+            <HeroHighlights />
             <LeadForm />
           </div>
         </section>

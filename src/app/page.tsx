@@ -6,6 +6,7 @@ import InsuranceTypes from "@/components/InsuranceTypes";
 import InfoTabs from "@/components/InfoTabs";
 import Footer from "@/components/Footer";
 import StickyBar from "@/components/StickyBar";
+import HeroHighlights from "@/components/HeroHighlights";
 
 export default function Home() {
   return (
@@ -53,21 +54,7 @@ export default function Home() {
               בדקו עכשיו אם אתם משלמים ביטוח כפול וחסכו אלפי שקלים בשנה!
             </h2>
 
-            {/* Trust badges (inline under subtitle) */}
-            <div className="flex flex-wrap justify-center gap-2 mb-5">
-              {[
-                "✅ ללא עלות",
-                "✅ ללא התחייבות",
-                "✅ בדיקה תוך דקות",
-              ].map((b) => (
-                <span
-                  key={b}
-                  className="bg-white rounded-full px-4 py-1.5 text-xs font-semibold text-gray-700 border border-gray-200 shadow-sm"
-                >
-                  {b}
-                </span>
-              ))}
-            </div>
+            <HeroHighlights />
 
             {/* Form */}
             <LeadForm />
