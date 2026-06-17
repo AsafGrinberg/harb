@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import FloatingChatWidget from "@/components/FloatingChatWidget";
 import Script from "next/script";
+import { Heebo } from "next/font/google";
 import "./globals.css";
+
+const heebo = Heebo({
+  subsets: ["hebrew", "latin"],
+  display: "swap",
+  preload: true,
+  variable: "--font-heebo",
+  weight: ["400", "500", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "הר ביטוח - בדיקת ביטוחים חינם",
@@ -26,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl" className="h-full antialiased">
+    <html lang="he" dir="rtl" className={`${heebo.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         {children}
         <FloatingChatWidget />
