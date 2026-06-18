@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ThankYouConversionTracker from "@/components/ThankYouConversionTracker";
 
 export const metadata: Metadata = {
   title: "תודה שבחרת בנו | הר ביטוח",
@@ -13,7 +12,6 @@ export const metadata: Metadata = {
 export default function ThankYouPage() {
   return (
     <>
-      <ThankYouConversionTracker />
       <Header />
       <main
         className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-16 text-center"
