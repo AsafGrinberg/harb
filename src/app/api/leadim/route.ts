@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const LEADIM_ENDPOINT = "https://api.lead.im/v2/submit";
 const LM_FORM = "118999";
@@ -60,10 +61,41 @@ export async function POST(request: Request) {
     const ssn = safe(body.ssn);
     const ssnDate = safe(body.ssn_date);
     const pageUrl = safe(body.page_url);
+    const submittedAt = new Date().toISOString();
 
     if (!name || !phone) {
       return NextResponse.json({ error: "Missing required fields: name, phone" }, { status: 400 });
     }
+
+    // Initialize Supabase for dual-save backup
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+
+    const saveToSupabase = async () => {
+      if (!supabase) return { ok: false, reason: "Supabase not configured" };
+      try {
+        const { error } = await supabase.from("leads").insert({
+          name,
+          phone,
+          ssn: ssn || null,
+          ssn_date: ssnDate || null,
+          page_url: pageUrl,
+          utm_source: safe(body.utm_source),
+          utm_medium: safe(body.utm_medium),
+          utm_campaign: safe(body.utm_campaign),
+          utm_content: safe(body.utm_content),
+          utm_term: safe(body.utm_term),
+          submitted_at: submittedAt,
+          created_at: submittedAt,
+        });
+        if (error) return { ok: false, reason: error.message };
+        return { ok: true };
+      } catch (err) {
+        console.error("Supabase save error:", err);
+        return { ok: false, reason: String(err) };
+      }
+    };
 
     const parsedUtm = extractUtms(pageUrl);
     const utm_source = safe(body.utm_source) || parsedUtm.utm_source;
@@ -106,14 +138,17 @@ export async function POST(request: Request) {
       // keep plain text payload
     }
 
+    // Save to Supabase independently - failure here doesn't block Lead.im response
+    const supabaseResult = await saveToSupabase();
+
     if (!response.ok) {
       return NextResponse.json(
-        { error: "Lead.im request failed", details: parsed },
+        { error: "Lead.im request failed", details: parsed, supabase: supabaseResult },
         { status: 502 }
       );
     }
 
-    return NextResponse.json({ ok: true, leadim: parsed });
+    return NextResponse.json({ ok: true, leadim: parsed, supabase: supabaseResult });
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
