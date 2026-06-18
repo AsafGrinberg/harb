@@ -1,5 +1,6 @@
 ﻿"use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CircleHelp, Loader2 } from "lucide-react";
 
 const WEBHOOK = "https://hook.eu2.make.com/9f3wrh3omt22solb5xy4meoo32nv76vr";
@@ -44,8 +45,8 @@ const SELECT_CLS =
   "flex-1 border border-[#d4d4d4] rounded-lg px-2 py-2.5 text-sm text-center bg-white outline-none transition focus:border-[#F34B1A] focus:ring-2 focus:ring-[#F34B1A]/10";
 
 export default function LeadForm() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
-  const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<FormData>({
     name: "", phone: "", id: "", issueDay: "", issueMonth: "", issueYear: "",
@@ -120,7 +121,7 @@ export default function LeadForm() {
         throw new Error("Lead submit failed");
       }
 
-      setDone(true);
+      router.push("/thank-you");
     } catch {
       setErr2("אירעה שגיאה, נסו שוב");
     } finally {
@@ -148,17 +149,8 @@ export default function LeadForm() {
         </div>
       </div>
 
-      {/* Done */}
-      {done && (
-        <div className="px-5 pb-6 text-center">
-          <div className="w-14 h-14 rounded-full bg-green-50 text-green-700 flex items-center justify-center text-3xl font-bold mx-auto mb-3">✓</div>
-          <h3 className="text-lg font-semibold text-[#1a1a1a] mb-1">קיבלנו את הפנייה</h3>
-          <p className="text-sm text-gray-500">נציג יחזור אליכם תוך שעות ספורות</p>
-        </div>
-      )}
-
       {/* Step 1 */}
-      {!done && step === 1 && (
+      {step === 1 && (
         <div className="px-5 pb-2">
           <div className="mb-3.5">
             <input type="text" placeholder="שם מלא" autoComplete="name"
@@ -180,7 +172,7 @@ export default function LeadForm() {
       )}
 
       {/* Step 2 */}
-      {!done && step === 2 && (
+      {step === 2 && (
         <div className="px-5 pb-2">
           <div className="mb-3.5">
             <input type="text" inputMode="numeric" maxLength={9} placeholder="תעודת זהות" autoComplete="off" dir="ltr"
@@ -233,7 +225,7 @@ export default function LeadForm() {
       )}
 
       {/* Legal */}
-      {!done && (
+      {(
         <p className="text-[11px] text-gray-400 text-center px-5 py-4 leading-relaxed border-t border-gray-50 mt-1">
           שליחת הטופס מהווה הסכמה ליצירת קשר ולמדיניות הפרטיות לפי{" "}
           <a href="/terms" className="text-gray-500 underline" target="_blank" rel="noopener noreferrer">תקנון האתר</a>.{" "}
